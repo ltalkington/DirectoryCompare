@@ -1,0 +1,61 @@
+# Compiler and flags
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra
+
+# Directories
+SRC_DIR = DirCompare/DirCompare/
+INC_DIR = include
+OBJ_DIR = obj
+BIN_DIR = bin
+TEST_DIR = DirCompareTest/DirCompareTest/
+
+# Targets
+TARGET = DirCompare
+TEST_TARGET = DirCompareTest
+
+# Source files
+SRC = $(SRC_DIR)/main.cpp $(SRC_DIR)/DirCompare.cpp
+TEST_SRC = $(SRC_DIR)/DirCompareTest.cpp
+
+# Object files
+OBJ = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC))
+TEST_OBJ = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(TEST_SRC))
+
+# Create directories if they don't exist
+$(BIN_DIR):
+	if not exist $(BIN_DIR) mkdir $(BIN_DIR)
+
+$(OBJ_DIR):
+	if not exist $(OBJ_DIR) mkdir $(OBJ_DIR)
+
+# Compile source files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
+
+# Compile test files
+$(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
+
+# Build the main program
+build: $(BIN_DIR) $(OBJ)
+	$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/$(TARGET).exe $(OBJ)
+
+# Build the test program
+build_test: $(BIN_DIR) $(TEST_OBJ)
+	$(CXX) $(CXXFLAGS) -DUNIT_TEST -o $(BIN_DIR)/$(TEST_TARGET).exe $(OBJ_DIR)/DirCompareTest.o -Wl,--subsystem,console
+
+# Clean build files
+clean:
+	if exist $(BIN_DIR) rmdir /s /q $(BIN_DIR)
+	if exist $(OBJ_DIR) rmdir /s /q $(OBJ_DIR)
+
+# Run the main program
+run: build
+	$(BIN_DIR)/$(TARGET).exe
+
+# Run the test program
+test: build_test
+	$(BIN_DIR)/$(TEST_TARGET).exe
+
+# Phony targets
+.PHONY: build build_test clean run test

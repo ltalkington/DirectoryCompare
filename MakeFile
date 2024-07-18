@@ -42,7 +42,7 @@ build: $(BIN_DIR) $(OBJ)
 
 # Build the test program
 build_test: $(BIN_DIR) $(TEST_OBJ)
-	$(CXX) $(CXXFLAGS) -DUNIT_TEST -o $(BIN_DIR)/$(TEST_TARGET).exe $(OBJ_DIR)/DirCompareTest.o -Wl,--subsystem,console
+	$(CXX) $(CXXFLAGS) -DUNIT_TEST -o $(BIN_DIR)/$(TEST_TARGET).exe $(OBJ_DIR)/DirCompareTest.o
 
 # Clean build files
 clean:
